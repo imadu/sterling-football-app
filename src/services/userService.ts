@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import { IUser } from "../types/user";
 import { UserSchema } from "../models/user.schema";
-import { RegisterDTO } from "./dtos/register.dto";
-
+import { RegisterDTO, UserDTO } from "./dtos/index.dto";
 
 export default class userService {
   private userModel = mongoose.model<IUser>("User", UserSchema);
@@ -43,13 +42,25 @@ export default class userService {
     }
   }
 
-  async create(user: RegisterDTO): Promise<IUser> {
+  async Create(user: RegisterDTO): Promise<IUser> {
     try {
       const createdUser = new this.userModel(user);
       await createdUser.save();
       return this.sanitizeUser(createdUser);
     } catch (error) {
       this.HandleError(error);
+    }
+  }
+
+  async Update(id: string, user: UserDTO): Promise<IUser> {
+    try {
+      return await this.userModel.findOneAndUpdate(
+        { _id: id },
+        { $set: user },
+        { new: true }
+      );
+    } catch (error) {
+        this.HandleError(error)
     }
   }
 }

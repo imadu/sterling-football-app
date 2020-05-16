@@ -5,7 +5,7 @@ import bodyparser from 'body-parser';
 
 
 class App {
-    private app: express.Application
+    private app: Application
     private port: number
     private db: string 
 

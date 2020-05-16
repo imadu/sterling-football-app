@@ -2,6 +2,12 @@ class Official {
     name: string;
     position: string;
 }
+
+class Player {
+  name: string;
+  age: number;
+  position: string;
+}
 export class RegisterDTO {
   firstname: string;
   lastname: string;
@@ -19,4 +25,19 @@ export class FixtureDTO {
   capacity: number;
   kickOffTime: Date;
   officials: [Official]
+}
+
+export class UserDTO {
+  firstname: string;
+  lastname: string;
+  email: string;
+  username: string;
+  role?: string;
+
+}
+
+export class TeamDTO {
+  name: string
+  stadium: string
+  Players? : [Player]
 }
