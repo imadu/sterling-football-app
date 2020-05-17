@@ -3,7 +3,7 @@ import { IUser } from "../types/user";
 import { UserSchema } from "../models/user.schema";
 import { RegisterDTO, UserDTO } from "./dtos/index.dto";
 
-export default class userService {
+export default class UserService {
   private userModel = mongoose.model<IUser>("User", UserSchema);
   constructor() {}
 

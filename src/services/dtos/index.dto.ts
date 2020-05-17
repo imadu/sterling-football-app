@@ -9,8 +9,8 @@ class Player {
   position: string;
 }
 export class RegisterDTO {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   username: string;
@@ -28,8 +28,8 @@ export class FixtureDTO {
 }
 
 export class UserDTO {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   username: string;
   role?: string;

@@ -3,8 +3,8 @@ import * as bcrypt from "bcrypt";
 import { IUser } from "../types/user";
 
 export const UserSchema = new mongoose.Schema({
-  firstname: String,
-  lastname: String,
+  firstName: String,
+  lastName: String,
   email: String,
   username: { type: String, unique: true },
   password: String,
