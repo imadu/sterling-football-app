@@ -8,7 +8,7 @@ export default class TeamService {
 
   constructor() {}
 
-  HandleError(error: any) {
+  private HandleError(error: any) {
     throw new Error(error);
   }
   async FindAllTeams(query: any): Promise<ITeam[]> {

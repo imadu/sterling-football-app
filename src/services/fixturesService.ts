@@ -38,9 +38,9 @@ export default class FixturesService {
     }
   }
 
-  async FindFixture(query: any): Promise<IFixture> {
+  async FindFixture(query: any): Promise<IFixture[]> {
     try {
-      const Fixture = await this.fixtureModel.findOne({ ...query });
+      const Fixture = await this.fixtureModel.find({ ...query });
       return Fixture;
     } catch (error) {
       this.HandleError(error);
