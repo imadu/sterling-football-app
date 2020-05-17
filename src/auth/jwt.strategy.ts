@@ -17,4 +17,6 @@ export default class JWT {
     });
     return token;
   }
+
+  
 }

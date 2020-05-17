@@ -5,67 +5,95 @@ import Handler from "../utils/response.handlers";
 import { UserDTO, RegisterDTO } from "../services/dtos/index.dto";
 
 export default class UserController {
-  private UserService: UserService = new UserService();
-  private Handler = new Handler();
+  _userService: UserService;
+  _responseHandler: Handler;
 
-  constructor() {}
+  constructor(userService: UserService, responseHandler: Handler) {
+    this._userService = userService;
+    this._responseHandler = responseHandler;
+    this.Create = this.Create.bind(this);
+    this.Delete = this.Delete.bind(this);
+    this.FindOne = this.FindOne.bind(this);
+    this.Get = this.Get.bind(this);
+    this.UpdateOne = this.UpdateOne.bind(this);
+  }
 
   async Get(req: Request, res: Response): Promise<Response<any>> {
     try {
-      const data = await this.UserService.FindAll();
-      return res.status(HttpStatus.OK).send(this.Handler.success(data));
+      const data = await this._userService.FindAll();
+      return this._responseHandler.success(res, HttpStatus.OK, data);
     } catch (error) {
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .send(this.Handler.error(error, "something went wrong", "404"));
+      return this._responseHandler.error(
+        res,
+        HttpStatus.NOT_FOUND,
+        error,
+        "could not get users",
+        "404"
+      );
     }
   }
   async FindOne(req: Request, res: Response): Promise<Response<any>> {
     try {
       const { username } = req.params;
-      const user = await this.UserService.FindUser(username);
-      return res.status(HttpStatus.OK).send(this.Handler.success(user));
+      const user = await this._userService.FindUser(username);
+      return this._responseHandler.success(res, HttpStatus.OK, user);
     } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(this.Handler.error(error, "something went wrong", "400"));
+      return this._responseHandler.error(
+        res,
+        HttpStatus.NOT_FOUND,
+        error,
+        "could not find user",
+        "404"
+      );
     }
   }
 
   async UpdateOne(req: Request, res: Response): Promise<Response<any>> {
-      const body: UserDTO = req.body
-      const {id} = req.params
+    const body: UserDTO = req.body;
+    const { id } = req.params;
     try {
-        const updated = await this.UserService.Update(id, body)
-        return res.status(HttpStatus.OK).send(this.Handler.success(updated))
+      const updated = await this._userService.Update(id, body);
+      return this._responseHandler.success(res, HttpStatus.OK, updated);
     } catch (error) {
-        return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(this.Handler.error(error, "something went wrong", "400"));
+      return this._responseHandler.error(
+        res,
+        HttpStatus.BAD_REQUEST,
+        error,
+        "could not update user",
+        "400"
+      );
     }
   }
 
   async Create(req: Request, res: Response): Promise<Response<any>> {
-      const body:RegisterDTO = req.body;
-      try {
-          const data = await this.UserService.Create(body)
-          return res.status(HttpStatus.CREATED).send(this.Handler.success(data));
-      } catch (error) {
-        return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(this.Handler.error(error, "something went wrong", "400"));
-      }
+    const body: RegisterDTO = req.body;
+    try {
+      const data = await this._userService.Create(body);
+      return this._responseHandler.success(res, HttpStatus.CREATED, data);
+    } catch (error) {
+      return this._responseHandler.error(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        error,
+        "could not create user",
+        "500"
+      );
+    }
   }
 
   async Delete(req: Request, res: Response): Promise<Response<any>> {
     const { id } = req.params;
     try {
-      const data = await this.UserService.DeleteUser(id);
-      return res.status(HttpStatus.OK).send(this.Handler.success(data));
+      const data = await this._userService.DeleteUser(id);
+      return this._responseHandler.success(res, HttpStatus.OK, data);
     } catch (error) {
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(this.Handler.error(error, "something went wrong", "500"));
+      return this._responseHandler.error(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        error,
+        "could not delete user",
+        "500"
+      );
     }
   }
 }

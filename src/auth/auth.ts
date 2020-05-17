@@ -7,36 +7,59 @@ import Handler from "../utils/response.handlers";
 import * as bcrypt from "bcrypt";
 
 export default class AuthService {
-  private jwt: JWT = new JWT();
-  private userService = new UserService();
-  private Handlers = new Handler();
+  jwt: JWT;
+  _userService: UserService;
+  _responseHandler: Handler;
+
+  constructor(jwt: JWT, userService: UserService, responseHandler: Handler) {
+    this.jwt = jwt;
+    this._userService = userService;
+    this._responseHandler = responseHandler;
+    this.signup = this.signup.bind(this)
+    this.login = this.login.bind(this)
+  }
 
   async signup(req: Request, res: Response): Promise<Response<any>> {
     const body: RegisterDTO = req.body;
     try {
-      const data = await this.userService.Create(body);
-      return res.status(HttpStatus.CREATED).send(this.Handlers.success(data));
+      const data = await this._userService.Create(body);
+      return this._responseHandler.success(res, HttpStatus.CREATED, data);
     } catch (error) {
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .send(this.Handlers.error(error, "something went wrong", "400"));
+      return this._responseHandler.error(
+        res,
+        HttpStatus.BAD_REQUEST,
+        error,
+        "something went wrong",
+        "400"
+      );
     }
   }
 
   async login(req: Request, res: Response): Promise<Response<any>> {
     const { username, password } = req.body;
     try {
-      const user = await this.userService.FindUser(username);
+      const user = await this._userService.FindUser(username);
       if (!user) {
-        return res
-          .status(HttpStatus.NOT_FOUND)
-          .send(this.Handlers.error(username, "username not found", "404"));
+        return this._responseHandler.error(
+          res,
+          HttpStatus.NOT_FOUND,
+          username,
+          "username not found",
+          "404"
+        );
       }
 
+      console.log('password here is', password)
+      console.log('user password', user.password);
+
       if (bcrypt.compareSync(password, user.password) !== true) {
-        return res
-          .status(HttpStatus.UNAUTHORIZED)
-          .send(this.Handlers.error(username, "password incorrect", "401"));
+        return this._responseHandler.error(
+          res,
+          HttpStatus.UNAUTHORIZED,
+          username,
+          "password incorrect",
+          "401"
+        );
       }
       const payload = {
         username: user.username,
@@ -45,9 +68,16 @@ export default class AuthService {
         firstName: user.firstName,
       };
       const token = this.jwt.Create(payload, true);
-      return res.status(HttpStatus.OK).send(this.Handlers.success(token));
+      return this._responseHandler.success(res, HttpStatus.OK, token);
     } catch (error) {
-        return res.status(HttpStatus.BAD_REQUEST).send(this.Handlers.error(error, 'something went wrong', '400'))
+      console.log(error)
+      return this._responseHandler.error(
+        res,
+        HttpStatus.BAD_REQUEST,
+        error,
+        "something went wrong",
+        "400"
+      );
     }
   }
 }

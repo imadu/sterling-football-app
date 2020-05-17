@@ -623,6 +623,11 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
+express-joi-validation@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/express-joi-validation/-/express-joi-validation-4.0.3.tgz#835a382780cdc207daf572098b2baad76802e7c0"
+  integrity sha512-XnEyhlllurczZDx1vLPWnaohTAQzxlvaP7ifEbvRf2zvYC5C5ZZrgFH75g0/XcL7OuaZ0XlVtB0J0E/R0O1L4A==
+
 express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"

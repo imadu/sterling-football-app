@@ -1,59 +1,75 @@
 import { Request, Response } from "express";
 import FixturesService from "../services/fixturesService";
-import Hander from "../utils/response.handlers";
+import Handler from "../utils/response.handlers";
 import HttpStauts from "http-status-codes";
 import { FixtureDTO } from "../services/dtos/index.dto";
 
 export default class FixtureController {
-  private FixtureService: FixturesService = new FixturesService();
-  private Handler = new Hander();
+  _fixtureService: FixturesService;
+  _responseHandler: Handler;
 
-  constructor() {}
+  constructor(fixtureService: FixturesService, responseHandler: Handler) {
+    this._fixtureService = fixtureService;
+    this._responseHandler = responseHandler;
+    this.Create = this.Create.bind(this);
+    this.DeleteFixture = this.DeleteFixture.bind(this);
+    this.FindAll = this.FindAll.bind(this);
+    this.FindOne = this.FindOne.bind(this);
+    this.UpdateFixture = this.UpdateFixture.bind(this);
+    this.FindOnStatus = this.FindOnStatus.bind(this);
+    this.FindOnQuery = this.FindOnQuery.bind(this);
+  }
 
   async FindAll(req: Request, res: Response): Promise<Response<any>> {
     const { date } = req.params;
     try {
-      const data = await this.FixtureService.FindAllTodayFixtures(
+      const data = await this._fixtureService.FindAllTodayFixtures(
         new Date(date)
       );
-      return res.status(HttpStauts.OK).send(this.Handler.success(data));
+      return this._responseHandler.success(res, HttpStauts.OK, data);
     } catch (error) {
-      return res
-        .status(HttpStauts.NOT_FOUND)
-        .send(
-          this.Handler.error(
-            error,
-            "could not find any fixtures for today",
-            "404"
-          )
-        );
+      return this._responseHandler.error(
+        res,
+        HttpStauts.NOT_FOUND,
+        error,
+        "could not find fixtures for today",
+        "404"
+      );
     }
   }
 
   async FindOne(req: Request, res: Response): Promise<Response<any>> {
     const { id } = req.params;
     try {
-      const fixture = await this.FixtureService.FindByID(id);
-      return res.status(HttpStauts.OK).send(this.Handler.success(fixture));
+      const fixture = await this._fixtureService.FindByID(id);
+      return this._responseHandler.success(res, HttpStauts.OK, fixture);
     } catch (error) {
-      return res
-        .status(HttpStauts.NOT_FOUND)
-        .send(this.Handler.error(error, "could not find fixture", "404"));
+      return this._responseHandler.error(
+        res,
+        HttpStauts.NOT_FOUND,
+        error,
+        "could not find fixture",
+        "404"
+      );
     }
   }
 
   async FindOnStatus(req: Request, res: Response): Promise<Response<any>> {
     const { date, status } = req.params;
     try {
-      const fixture = await this.FixtureService.FindFixturesOnStatus(
+      const fixture = await this._fixtureService.FindFixturesOnStatus(
         new Date(date),
         status
       );
-      return res.status(HttpStauts.OK).send(this.Handler.success(fixture));
+      return this._responseHandler.success(res, HttpStauts.OK, fixture);
     } catch (error) {
-      return res
-        .status(HttpStauts.NOT_FOUND)
-        .send(this.Handler.error(error, "could not find fixture", "404"));
+      return this._responseHandler.error(
+        res,
+        HttpStauts.NOT_FOUND,
+        error,
+        "could not find fixture",
+        "404"
+      );
     }
   }
 
@@ -78,24 +94,32 @@ export default class FixtureController {
     }
 
     try {
-      const data = await this.FixtureService.FindFixture(queryObject);
-      return res.status(HttpStauts.OK).send(this.Handler.success(data));
+      const data = await this._fixtureService.FindFixture(queryObject);
+      return this._responseHandler.success(res, HttpStauts.OK, data);
     } catch (error) {
-      return res
-        .status(HttpStauts.BAD_REQUEST)
-        .send(this.Handler.error(error, "something went wrong", "400"));
+      return this._responseHandler.error(
+        res,
+        HttpStauts.BAD_REQUEST,
+        error,
+        "something went wrong",
+        "400"
+      );
     }
   }
 
   async Create(req: Request, res: Response): Promise<Response<any>> {
     const body: FixtureDTO = req.body;
     try {
-      const fixture = await this.FixtureService.Create(body);
-      return res.status(HttpStauts.CREATED).send(this.Handler.success(fixture));
+      const fixture = await this._fixtureService.Create(body);
+      return this._responseHandler.success(res, HttpStauts.CREATED, fixture);
     } catch (error) {
-      return res
-        .status(HttpStauts.INTERNAL_SERVER_ERROR)
-        .send(this.Handler.error(error, "something went wrong", "500"));
+      return this._responseHandler.error(
+        res,
+        HttpStauts.INTERNAL_SERVER_ERROR,
+        error,
+        "something went wrong",
+        "500"
+      );
     }
   }
 
@@ -103,26 +127,32 @@ export default class FixtureController {
     const body: FixtureDTO = req.body;
     const { id } = req.params;
     try {
-      const updateFixture = await this.FixtureService.Update(id, body);
-      return res
-        .status(HttpStauts.OK)
-        .send(this.Handler.success(updateFixture));
+      const updateFixture = await this._fixtureService.Update(id, body);
+      return this._responseHandler.success(res, HttpStauts.OK, updateFixture);
     } catch (error) {
-      return res
-        .status(HttpStauts.BAD_REQUEST)
-        .send(this.Handler.error(error, "could not update the request", "400"));
+      return this._responseHandler.error(
+        res,
+        HttpStauts.BAD_REQUEST,
+        error,
+        "something went wrong",
+        "400"
+      );
     }
   }
 
-  async DeleteFixture(req: Request, res: Response): Promise<Response<any>>{
-      const {id} = req.params;
-      try {
-          const deleted = await this.FixtureService.DeleteFixture(id)
-          return res.status(HttpStauts.OK).send(this.Handler.success(deleted))
-      } catch (error) {
-        return res
-        .status(HttpStauts.BAD_REQUEST)
-        .send(this.Handler.error(error, "could not update the request", "500"));
-      }
+  async DeleteFixture(req: Request, res: Response): Promise<Response<any>> {
+    const { id } = req.params;
+    try {
+      const deleted = await this._fixtureService.DeleteFixture(id);
+      return this._responseHandler.success(res, HttpStauts.OK, deleted);
+    } catch (error) {
+      return this._responseHandler.error(
+        res,
+        HttpStauts.INTERNAL_SERVER_ERROR,
+        error,
+        "something went wrong",
+        "500"
+      );
+    }
   }
 }

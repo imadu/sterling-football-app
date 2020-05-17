@@ -1,13 +1,14 @@
-import express, {Application, Request, Response, NextFunction} from 'express';
+import express, { Request, Response, NextFunction} from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyparser from 'body-parser';
+import {appRoutes} from './routes/Index'
 
 
 class App {
-    private app: Application
+    private app: express.Application
     private port: number
-    private db: string 
+    private db: string
 
     constructor(){
         this.app = express()
@@ -20,18 +21,11 @@ class App {
         this.db = process.env.DB;
         this.app.use(bodyparser.urlencoded({ extended: true }));
         this.app.use(bodyparser.json());
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-            res.setHeader('Access-Control-Allow-Headers', '*');
-            res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-            if (req.method === 'OPTIONS') {
-                res.sendStatus(200);
-            }
-
-            next();
-        });
+        this.app.use('/v1/',appRoutes);
+        this.app.use('/', (req: Request, res: Response) => {
+            console.log('you got here');
+            res.status(200).json('hello world')
+        })
 
     }
 

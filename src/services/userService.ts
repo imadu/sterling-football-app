@@ -28,7 +28,7 @@ export default class UserService {
   async FindUser(username: string): Promise<IUser> {
     try {
       const result = await this.userModel.findOne({ username });
-      return this.sanitizeUser(result);
+      return result;
     } catch (error) {
       this.HandleError(error);
     }
@@ -43,6 +43,7 @@ export default class UserService {
   }
 
   async Create(user: RegisterDTO): Promise<IUser> {
+    console.log('user is', user);
     try {
       const createdUser = new this.userModel(user);
       await createdUser.save();
