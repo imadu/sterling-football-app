@@ -34,8 +34,8 @@ export default class UserController {
   }
   async FindOne(req: Request, res: Response): Promise<Response<any>> {
     try {
-      const { username } = req.params;
-      const user = await this._userService.FindUser(username);
+      const { id } = req.params;
+      const user = await this._userService.FindByID(id);
       return this._responseHandler.success(res, HttpStatus.OK, user);
     } catch (error) {
       return this._responseHandler.error(

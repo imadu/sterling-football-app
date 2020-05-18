@@ -49,9 +49,6 @@ export default class AuthService {
         );
       }
 
-      console.log('password here is', password)
-      console.log('user password', user.password);
-
       if (bcrypt.compareSync(password, user.password) !== true) {
         return this._responseHandler.error(
           res,
@@ -62,6 +59,7 @@ export default class AuthService {
         );
       }
       const payload = {
+        id: user._id,
         username: user.username,
         email: user.email,
         role: user.role,
@@ -70,7 +68,6 @@ export default class AuthService {
       const token = this.jwt.Create(payload, true);
       return this._responseHandler.success(res, HttpStatus.OK, token);
     } catch (error) {
-      console.log(error)
       return this._responseHandler.error(
         res,
         HttpStatus.BAD_REQUEST,

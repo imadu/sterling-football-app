@@ -21,82 +21,128 @@ class IndexRoute {
   userController: UserController;
   fixtureController: FixtureController;
   teamController: TeamController;
+  jwt: JWT;
 
   constructor(
     authService: AuthService,
     userController: UserController,
     fixtureController: FixtureController,
-    teamController: TeamController
+    teamController: TeamController,
+    jwt: JWT
   ) {
     this.authService = authService;
     this.fixtureController = fixtureController;
     this.teamController = teamController;
     this.userController = userController;
+    this.jwt = jwt;
     this.router = Router();
     this.routes();
   }
 
   private routes(): void {
-    console.log("this is defined in the router as", this);
     const expressJoi = createValidator();
-
-    this.router.get("/", (req: Request, res: Response) => {
-      console.log("you got here");
-      res.status(200).json("hello world");
-    });
     /*All auth routes*/
     this.router.post("/auth/signup", this.authService.signup);
     this.router.post("/auth/login", this.authService.login);
 
     /*All user routes*/
-    this.router.get("/user/", this.userController.Get);
-    this.router.get("/user/:username", this.userController.FindOne);
+    this.router.get("/user/", this.jwt.isAdmin, this.userController.Get);
+    this.router.get(
+      "/user/:username",
+      this.jwt.isAdmin,
+      this.userController.FindOne
+    );
     this.router.post(
       "/user/",
       expressJoi.query(createUserSchema),
       this.userController.Create
     );
-    this.router.put("/user/:id", this.userController.UpdateOne);
-    this.router.delete("/user/:id", this.userController.Delete);
+    this.router.put(
+      "/user/:id",
+      this.jwt.isAdmin,
+      this.userController.UpdateOne
+    );
+    this.router.delete(
+      "/user/:id",
+      this.jwt.isAdmin,
+      this.userController.Delete
+    );
 
     /*All fixture routes*/
-    this.router.get("/fixtures", this.fixtureController.FindAll);
-    this.router.get("/fixtures/status/", this.fixtureController.FindOnStatus);
-    this.router.get("/fixtures/:id", this.fixtureController.FindOne);
-    this.router.get("/fixtures/query/", this.fixtureController.FindOnQuery);
+    this.router.get(
+      "/fixtures",
+      this.jwt.checkToken,
+      this.fixtureController.FindAll
+    );
+    this.router.get(
+      "/fixtures/status/",
+      this.jwt.checkToken,
+      this.fixtureController.FindOnStatus
+    );
+    this.router.get(
+      "/fixtures/:id",
+      this.jwt.checkToken,
+      this.fixtureController.FindOne
+    );
+    this.router.get(
+      "/fixtures/query/",
+      this.jwt.checkToken,
+      this.fixtureController.FindOnQuery
+    );
     this.router.post(
       "/fixtures",
       expressJoi.query(createFixturesSchema),
+      this.jwt.isAdmin,
       this.fixtureController.Create
     );
     this.router.put(
       "/fixtures/:id",
       expressJoi.query(createFixturesSchema),
+      this.jwt.isAdmin,
       this.fixtureController.UpdateFixture
     );
-    this.router.delete("/fixtures/:id", this.fixtureController.DeleteFixture);
+    this.router.delete(
+      "/fixtures/:id",
+      this.jwt.isAdmin,
+      this.fixtureController.DeleteFixture
+    );
 
     /*All team routes*/
-    this.router.get("/teams/", this.teamController.FindAll);
-    this.router.get("/teams/:name", this.teamController.FindOne);
+    this.router.get(
+      "/teams/",
+      this.jwt.checkToken,
+      this.teamController.FindAll
+    );
+    this.router.get(
+      "/teams/:name",
+      this.jwt.checkToken,
+      this.teamController.FindOne
+    );
     this.router.post(
       "/teams/",
       expressJoi.query(createTeamSchema),
+      this.jwt.isAdmin,
       this.teamController.Create
     );
     this.router.put(
       "/teams/",
       expressJoi.query(createTeamSchema),
+      this.jwt.isAdmin,
       this.teamController.UpdateTeam
     );
-    this.router.delete("/teams/:id", this.teamController.DeleteTeam);
+    this.router.delete(
+      "/teams/:id",
+      this.jwt.isAdmin,
+      this.teamController.DeleteTeam
+    );
   }
 }
-let jwt = new JWT();
+
 let userService = new UserService();
-let teamService  = new TeamService();
+let teamService = new TeamService();
 let fixtureService = new FixturesService();
 let responseHandler = new Handler();
+let jwt = new JWT(userService, responseHandler);
 let authService = new AuthService(jwt, userService, responseHandler);
 let userController = new UserController(userService, responseHandler);
 let fixtureController = new FixtureController(fixtureService, responseHandler);
@@ -105,5 +151,6 @@ export const appRoutes = new IndexRoute(
   authService,
   userController,
   fixtureController,
-  teamController
+  teamController,
+  jwt
 ).router;

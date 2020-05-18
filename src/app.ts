@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyparser from 'body-parser';
 import {appRoutes} from './routes/Index'
+import rateLimit from 'express-rate-limit';
 
 
 class App {
@@ -19,13 +20,13 @@ class App {
         dotenv.config();
         this.port = Number(process.env.PORT);
         this.db = process.env.DB;
+        const limiter = rateLimit({
+            windowMs: 60 * 60 * 1000,
+            max: 100
+        })
         this.app.use(bodyparser.urlencoded({ extended: true }));
         this.app.use(bodyparser.json());
-        this.app.use('/v1/',appRoutes);
-        this.app.use('/', (req: Request, res: Response) => {
-            console.log('you got here');
-            res.status(200).json('hello world')
-        })
+        this.app.use('/v1/',limiter, appRoutes);
 
     }
 

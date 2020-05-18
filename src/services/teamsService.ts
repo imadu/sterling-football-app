@@ -9,7 +9,7 @@ export default class TeamService {
   constructor() {}
 
   private HandleError(error: any) {
-    throw new Error(error);
+    return error;
   }
   async FindAllTeams(query: any): Promise<ITeam[]> {
     const limit: number = query.limit ? parseInt(query.limit, 10) : 10;

@@ -14,12 +14,21 @@ export default class UserService {
   }
 
   public HandleError(error: string) {
-    throw new Error(error);
+    return error;
   }
 
   async FindAll(): Promise<IUser[]> {
     try {
       return await this.userModel.find();
+    } catch (error) {
+      this.HandleError(error);
+    }
+  }
+
+  async FindByID(id: string): Promise<IUser> {
+    try {
+      const result = await this.userModel.findOne({_id: id });
+      return this.sanitizeUser(result);
     } catch (error) {
       this.HandleError(error);
     }

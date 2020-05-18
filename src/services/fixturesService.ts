@@ -8,7 +8,7 @@ export default class FixturesService {
   constructor() {}
 
   HandleError(error: any) {
-    throw new Error(error);
+    return error;
   }
 
   async FindAllTodayFixtures(date: Date): Promise<IFixture[]> {
