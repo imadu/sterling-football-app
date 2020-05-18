@@ -35,7 +35,7 @@ export default class TeamController {
     }
     if (query.limit) {
       // tslint:disable-next-line: no-string-literal
-      queryObject["stadium"] = query.limit;
+      queryObject["limit"] = query.limit;
     }
 
     try {
@@ -54,6 +54,7 @@ export default class TeamController {
 
   async FindOne(req: Request, res: Response): Promise<Response<any>> {
     const { name } = req.params;
+    console.log(name);
     try {
       const team = await this._teamsService.FindTeam(name);
       return this._responseHandler.success(res, HttpStatus.OK, team);

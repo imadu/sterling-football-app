@@ -1,6 +1,6 @@
 class Official {
-    name: string;
-    position: string;
+  name: string;
+  position: string;
 }
 
 class Player {
@@ -20,11 +20,13 @@ export class RegisterDTO {
 export class FixtureDTO {
   fixtureDate: Date;
   homeTeam: string;
+  status: string;
+  score: number;
   awayTeam: string;
   stadium: string;
   capacity: number;
   kickOffTime: Date;
-  officials: [Official]
+  officials: [Official];
 }
 
 export class UserDTO {
@@ -33,11 +35,10 @@ export class UserDTO {
   email: string;
   username: string;
   role?: string;
-
 }
 
 export class TeamDTO {
-  name: string
-  stadium: string
-  Players? : [Player]
+  name: string;
+  stadium: string;
+  Players?: [Player];
 }

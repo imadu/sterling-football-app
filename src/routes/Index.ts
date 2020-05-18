@@ -41,8 +41,15 @@ class IndexRoute {
 
   private routes(): void {
     const expressJoi = createValidator();
+    this.router.get("/", (req, res) => {
+      return res.status(200).send("Sterling Bank APP");
+    });
     /*All auth routes*/
-    this.router.post("/auth/signup", this.authService.signup);
+    this.router.post(
+      "/auth/signup",
+      expressJoi.body(createUserSchema),
+      this.authService.signup
+    );
     this.router.post("/auth/login", this.authService.login);
 
     /*All user routes*/
@@ -54,7 +61,7 @@ class IndexRoute {
     );
     this.router.post(
       "/user/",
-      expressJoi.query(createUserSchema),
+      expressJoi.body(createUserSchema),
       this.userController.Create
     );
     this.router.put(
@@ -89,15 +96,21 @@ class IndexRoute {
       this.jwt.checkToken,
       this.fixtureController.FindOnQuery
     );
+    this.router.get(
+      "/fixtures/generate/:id",
+      this.jwt.checkToken,
+      this.fixtureController.GenerateLink
+    );
+
     this.router.post(
       "/fixtures",
-      expressJoi.query(createFixturesSchema),
+      expressJoi.body(createFixturesSchema),
       this.jwt.isAdmin,
       this.fixtureController.Create
     );
     this.router.put(
       "/fixtures/:id",
-      expressJoi.query(createFixturesSchema),
+      expressJoi.body(createFixturesSchema),
       this.jwt.isAdmin,
       this.fixtureController.UpdateFixture
     );
@@ -120,13 +133,13 @@ class IndexRoute {
     );
     this.router.post(
       "/teams/",
-      expressJoi.query(createTeamSchema),
+      expressJoi.body(createTeamSchema),
       this.jwt.isAdmin,
       this.teamController.Create
     );
     this.router.put(
-      "/teams/",
-      expressJoi.query(createTeamSchema),
+      "/teams/:id",
+      expressJoi.body(createTeamSchema),
       this.jwt.isAdmin,
       this.teamController.UpdateTeam
     );

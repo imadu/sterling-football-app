@@ -10,6 +10,8 @@ export interface IFixture extends Document {
   homeTeam: string;
   awayTeam: string;
   stadium: string;
+  status: string;
+  score: number;
   capacity: number;
   kickOffTime: Date;
   matchOfficials: [Official];

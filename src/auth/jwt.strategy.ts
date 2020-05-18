@@ -32,6 +32,15 @@ export default class JWT {
   public async checkToken(req: Request, res: Response, next: NextFunction) {
     let token = req.headers.authorization.split(" ")[1],
       decoded;
+    if (!token) {
+      return this._responseHandler.error(
+        res,
+        HttpStatus.UNAUTHORIZED,
+        token,
+        "unauthorized",
+        "403"
+      );
+    }
     if (typeof token === "undefined") {
       return this._responseHandler.error(
         res,
@@ -116,8 +125,8 @@ export default class JWT {
     }
     let userToken = decoded as any;
     try {
-      const adminUser = await this._userService.FindByID(userToken.id)
-      if (adminUser.role === 'admin'){
+      const adminUser = await this._userService.FindByID(userToken.id);
+      if (adminUser.role === "admin") {
         return next();
       }
       return this._responseHandler.error(
@@ -127,7 +136,6 @@ export default class JWT {
         "user not authorized for this route",
         "401"
       );
-
     } catch (error) {
       return this._responseHandler.error(
         res,
@@ -136,8 +144,6 @@ export default class JWT {
         "something went wrong with the token",
         "500"
       );
-      
     }
-    
   }
 }

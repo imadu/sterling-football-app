@@ -18,6 +18,7 @@ export default class FixtureController {
     this.UpdateFixture = this.UpdateFixture.bind(this);
     this.FindOnStatus = this.FindOnStatus.bind(this);
     this.FindOnQuery = this.FindOnQuery.bind(this);
+    this.GenerateLink = this.GenerateLink.bind(this);
   }
 
   async FindAll(req: Request, res: Response): Promise<Response<any>> {
@@ -34,6 +35,22 @@ export default class FixtureController {
         error,
         "could not find fixtures for today",
         "404"
+      );
+    }
+  }
+
+  async GenerateLink(req: Request, res: Response): Promise<Response<any>> {
+    const { id } = req.params;
+    try {
+      const link = await this._fixtureService.GenrateFixtureLink(id);
+      return this._responseHandler.success(res, HttpStauts.CREATED, link);
+    } catch (error) {
+      return this._responseHandler.error(
+        res,
+        HttpStauts.EXPECTATION_FAILED,
+        error,
+        "could not create unique link",
+        "417"
       );
     }
   }
@@ -55,10 +72,11 @@ export default class FixtureController {
   }
 
   async FindOnStatus(req: Request, res: Response): Promise<Response<any>> {
-    const { date, status } = req.params;
+    const date: any = req.query.date;
+    const status: any = req.query.status;
     try {
       const fixture = await this._fixtureService.FindFixturesOnStatus(
-        new Date(date),
+        date,
         status
       );
       return this._responseHandler.success(res, HttpStauts.OK, fixture);
@@ -144,7 +162,7 @@ export default class FixtureController {
     const { id } = req.params;
     try {
       const deleted = await this._fixtureService.DeleteFixture(id);
-      return this._responseHandler.success(res, HttpStauts.OK, deleted);
+      return this._responseHandler.success(res, HttpStauts.OK, deleted._id);
     } catch (error) {
       return this._responseHandler.error(
         res,

@@ -6,8 +6,7 @@
   "author": "Madu Ikechukwu",
   "license": "MIT",
   "scripts": {
-    "build": "npm install tsc && npm run compile",
-    "compile": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "node dist/main.js",
     "start:dev": "nodemon src/main.ts",
@@ -31,7 +30,8 @@
     "express-rate-limit": "^5.1.3",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.14"
+    "mongoose": "^5.9.14",
+    "ts-node": "^8.10.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

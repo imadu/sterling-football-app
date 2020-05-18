@@ -6,6 +6,11 @@ const playerSchema = Joi.object().keys({
   position: Joi.string().max(3).required(),
 })
 
+const matchOfficialsSchema = Joi.object().keys({
+  name: Joi.string().lowercase().max(50),
+  position: Joi.string().max(50),
+})
+
 export const createUserSchema = Joi.object().keys({
   email: Joi.string().lowercase().email().required(),
   firstName: Joi.string().lowercase().max(50).required(),
@@ -20,8 +25,11 @@ export const createFixturesSchema = Joi.object().keys({
   awayTeam: Joi.string().lowercase().required(),
   stadium: Joi.string().lowercase().required(),
   capacity: Joi.number().optional(),
+  status: Joi.string().optional(),
+  score: Joi.number().optional(),
   kickOffTime: Joi.date().required(),
   fixtureDate: Joi.date().required(),
+  matchOfficials: Joi.array().items(matchOfficialsSchema),
 });
 
 

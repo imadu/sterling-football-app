@@ -19,7 +19,7 @@ export default class UserService {
 
   async FindAll(): Promise<IUser[]> {
     try {
-      return await this.userModel.find();
+      return await this.userModel.find({}, '-password');
     } catch (error) {
       this.HandleError(error);
     }
@@ -52,12 +52,12 @@ export default class UserService {
   }
 
   async Create(user: RegisterDTO): Promise<IUser> {
-    console.log('user is', user);
     try {
       const createdUser = new this.userModel(user);
       await createdUser.save();
       return this.sanitizeUser(createdUser);
     } catch (error) {
+      console.log(error);
       this.HandleError(error);
     }
   }

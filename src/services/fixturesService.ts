@@ -11,18 +11,38 @@ export default class FixturesService {
     return error;
   }
 
-  async FindAllTodayFixtures(date: Date): Promise<IFixture[]> {
+  async FindAllTodayFixtures(query: any): Promise<IFixture[]> {
+    const limit: number = query.limit ? parseInt(query.limit, 10) : 10;
+    const page: number = query.page ? parseInt(query.page, 10) : 1;
+    delete query.limit;
+    delete query.page;
     try {
-      return await this.fixtureModel.find({ fixtureDate: date });
+      return await this.fixtureModel
+        .find({ ...query })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort({ createdAt: -1 });
     } catch (error) {
       this.HandleError(error);
     }
   }
 
-  async FindFixturesOnStatus(date: Date, status: string): Promise<IFixture[]> {
+  async GenrateFixtureLink(id: string): Promise<string> {
+    try {
+      const fixture = await this.FindByID(id);
+      if (fixture) {
+        return `${process.env.HOST}/fixtures/${fixture._id}`;
+      }
+      return this.HandleError("fixture not found");
+    } catch (error) {
+      this.HandleError(error);
+    }
+  }
+
+  async FindFixturesOnStatus(date: string, status: string): Promise<IFixture[]> {
     try {
       const fixtures = await this.fixtureModel.find({
-        $and: [{ fixtureDate: date }, { status }],
+        $and: [{ fixtureDate: new Date(date) }, { status }],
       });
       return fixtures;
     } catch (error) {
