@@ -22,11 +22,9 @@ export default class FixtureController {
   }
 
   async FindAll(req: Request, res: Response): Promise<Response<any>> {
-    const { date } = req.params;
+    const query = req.query;
     try {
-      const data = await this._fixtureService.FindAllTodayFixtures(
-        new Date(date)
-      );
+      const data = await this._fixtureService.FindAllTodayFixtures(query);
       return this._responseHandler.success(res, HttpStauts.OK, data);
     } catch (error) {
       return this._responseHandler.error(
