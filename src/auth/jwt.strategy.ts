@@ -21,11 +21,10 @@ export default class JWT {
       token = jwt.sign(payload, process.env.SECRET, {
         expiresIn: process.env.LONG_TIME,
       });
+      
       return `Bearer ${token}`;
     }
-    token = jwt.sign(payload, process.env.SECRET, {
-      expiresIn: process.env.SHORT_TIME,
-    });
+    token = jwt.sign(payload, process.env.SECRET, {expiresIn: '12h'});
     return `Bearer ${token}`;
   }
 
@@ -53,6 +52,7 @@ export default class JWT {
 
     try {
       decoded = jwt.verify(token, process.env.SECRET);
+      console.log('token exp', decoded)
     } catch (error) {
       return this._responseHandler.error(
         res,
