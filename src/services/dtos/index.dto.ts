@@ -1,4 +1,4 @@
-class Official {
+export class Official {
   name: string;
   position: string;
 }
@@ -17,16 +17,16 @@ export class RegisterDTO {
   role?: string;
 }
 
-export class FixtureDTO {
+export interface FixtureDTO {
   fixtureDate: Date;
   homeTeam: string;
-  status: string;
-  score: number;
+  status?: string;
+  score?: number;
   awayTeam: string;
   stadium: string;
   capacity: number;
   kickOffTime: Date;
-  officials: [Official];
+  matchOfficials: {name: string, position: string}[];
 }
 
 export class UserDTO {
@@ -40,5 +40,5 @@ export class UserDTO {
 export class TeamDTO {
   name: string;
   stadium: string;
-  Players?: [Player];
+  Players?: Player[];
 }

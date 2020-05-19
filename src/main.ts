@@ -1,3 +1,8 @@
 import App from './app'
 
-App.start()
+let app: App;
+
+app = new App();
+
+app.start();
+

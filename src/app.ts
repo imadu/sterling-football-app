@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 
 
 class App {
-    private app: express.Application
+    public app: express.Application
     private port: number
     private db: string
 
@@ -43,6 +43,6 @@ class App {
     }
 }
 
-export default new App()
+export default App;
 
 

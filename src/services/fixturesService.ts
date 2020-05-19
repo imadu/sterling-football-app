@@ -39,7 +39,10 @@ export default class FixturesService {
     }
   }
 
-  async FindFixturesOnStatus(date: string, status: string): Promise<IFixture[]> {
+  async FindFixturesOnStatus(
+    date: string,
+    status: string
+  ): Promise<IFixture[]> {
     try {
       const fixtures = await this.fixtureModel.find({
         $and: [{ fixtureDate: new Date(date) }, { status }],
@@ -78,9 +81,9 @@ export default class FixturesService {
 
   async Update(id: string, fixture: FixtureDTO): Promise<IFixture> {
     try {
-      const updatedFixture = await this.fixtureModel.findOneAndUpdate(
+      const updatedFixture = await this.fixtureModel.findByIdAndUpdate(
         { _id: id },
-        { $set: fixture },
+        { $set: fixture as IFixture },
         { new: true }
       );
       return updatedFixture;
